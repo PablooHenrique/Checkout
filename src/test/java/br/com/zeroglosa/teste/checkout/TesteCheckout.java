@@ -1,24 +1,26 @@
 package br.com.zeroglosa.teste.checkout;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import br.com.zeroglosa.controller.Checkout;
+import br.com.zeroglosa.model.Produto;
+import br.com.zeroglosa.model.promocao.IPromocao;
+import br.com.zeroglosa.model.promocao.PromocaoComPorcentagemDesconto;
 import br.com.zeroglosa.repository.Repository;
 
 public class TesteCheckout {
 	private Checkout checkout;
 	private Repository repository;
 	
-	public TesteCheckout() {
-		super();
-		checkout 	= new Checkout();
-		repository 	= new Repository();
-	}
-	
 	@Before
 	public void init(){
+		checkout 	= new Checkout();
+		repository 	= new Repository();
 		repository.iniciarlizarBd();
 	}
 
@@ -159,6 +161,42 @@ public class TesteCheckout {
 		
 		double totalPrice = checkout.getTotalPrice();
 		Assert.assertTrue(totalPrice == 60);
+	}
+	
+	@Test
+	public void testeProdutoComMaisDeUmaPromocao(){
+		List<IPromocao> promocoes = new ArrayList<IPromocao>();
+		
+		promocoes.add(new PromocaoComPorcentagemDesconto(4, 200));
+		promocoes.add(new PromocaoComPorcentagemDesconto(2, 150));
+		
+		Produto produto = new Produto("X", 100.0, promocoes);
+		repository.adicionarProduto(produto);
+		checkout.add("X");
+		checkout.add("X");
+		checkout.add("X");
+		checkout.add("X");
+		
+		double totalPrice = checkout.getTotalPrice();
+		Assert.assertTrue(totalPrice == 200);
+	}
+	
+	@Test
+	public void testeProdutoComMaisDeUmaPromocaoValorDesconto(){
+		List<IPromocao> promocoes = new ArrayList<IPromocao>();
+		
+		promocoes.add(new PromocaoComPorcentagemDesconto(4, 200));
+		promocoes.add(new PromocaoComPorcentagemDesconto(2, 150));
+		
+		Produto produto = new Produto("X", 100.0, promocoes);
+		repository.adicionarProduto(produto);
+		checkout.add("X");
+		checkout.add("X");
+		checkout.add("X");
+		checkout.add("X");
+		
+		double totalDiscont = checkout.getTotalDiscount();
+		Assert.assertTrue(totalDiscont == 200);
 	}
 	
 	//Casos de teste relativos a prova para desconto e Valor Total

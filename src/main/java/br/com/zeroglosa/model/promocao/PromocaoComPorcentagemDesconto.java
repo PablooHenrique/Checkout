@@ -3,12 +3,12 @@ package br.com.zeroglosa.model.promocao;
 public class PromocaoComPorcentagemDesconto implements IPromocao{
 
 	private int quantidadeProdutos;
-	private double porcentagemDesconto;
+	private double valorComDesconto;
 	
-	public PromocaoComPorcentagemDesconto(int quantidadeProdutos, double porcentagemDesconto) {
+	public PromocaoComPorcentagemDesconto(int quantidadeProdutos, double valorComDesconto) {
 		super();
 		this.quantidadeProdutos = quantidadeProdutos;
-		this.porcentagemDesconto = porcentagemDesconto;
+		this.valorComDesconto = valorComDesconto;
 	}
 
 	@Override
@@ -38,10 +38,16 @@ public class PromocaoComPorcentagemDesconto implements IPromocao{
 	private double getValorProdutosEmPromocao(int quantidade, double precoUnitario){
 		int quantidadeProdutosEmPromocao = getQuantidadeProdutosEmPromocao(quantidade);
 		double valorProdutosEmPromocao = (this.quantidadeProdutos * precoUnitario);
-		valorProdutosEmPromocao = valorProdutosEmPromocao - Math.round(((valorProdutosEmPromocao * this.porcentagemDesconto) / 100));
+		valorProdutosEmPromocao = valorProdutosEmPromocao - Math.round(((valorProdutosEmPromocao * calcularPorcentagemDeDesconto(precoUnitario)) / 100));
 		valorProdutosEmPromocao = valorProdutosEmPromocao * quantidadeProdutosEmPromocao;
 		
 		return valorProdutosEmPromocao;
+	}
+	
+	private double calcularPorcentagemDeDesconto(double precoUnitario){
+		Double valorReal = this.quantidadeProdutos * precoUnitario;
+		return ( 100 - ( this.valorComDesconto * 100 ) / valorReal);
+		
 	}
 	
 	private double getValorProdutosSemPromocao(int quantidade, double precoUnitario){
